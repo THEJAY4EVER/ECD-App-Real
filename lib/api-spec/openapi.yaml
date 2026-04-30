@@ -1,0 +1,701 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Masuka Junior School ECD API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: auth
+  - name: admin
+  - name: lessons
+  - name: stories
+  - name: assignments
+  - name: submissions
+  - name: students
+  - name: dashboard
+  - name: Storage
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HealthStatus" }
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginBody" }
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        "204": { description: Logged out }
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      responses:
+        "200":
+          description: Admin platform statistics
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminStats" }
+
+  /admin/users:
+    get:
+      operationId: listAdminUsers
+      tags: [admin]
+      responses:
+        "200":
+          description: All non-admin users
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AdminUser" }
+    post:
+      operationId: createAdminUser
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateUserBody" }
+      responses:
+        "201":
+          description: Created user with one-time password
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminUserCreated" }
+
+  /admin/users/{id}:
+    patch:
+      operationId: updateAdminUser
+      tags: [admin]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateUserBody" }
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminUser" }
+    delete:
+      operationId: deleteAdminUser
+      tags: [admin]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "204": { description: Deleted }
+
+  /admin/users/{id}/reset-password:
+    post:
+      operationId: resetAdminUserPassword
+      tags: [admin]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: New one-time password
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ResetPasswordResult" }
+
+  /lessons:
+    get:
+      operationId: listLessons
+      tags: [lessons]
+      parameters:
+        - in: query
+          name: subject
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of curated lessons
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Lesson" }
+  /lessons/{id}:
+    get:
+      operationId: getLesson
+      tags: [lessons]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: A lesson
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Lesson" }
+  /lessons/subjects:
+    get:
+      operationId: listSubjects
+      tags: [lessons]
+      responses:
+        "200":
+          description: All subjects with counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/SubjectSummary" }
+
+  /stories:
+    get:
+      operationId: listStories
+      tags: [stories]
+      responses:
+        "200":
+          description: All stories
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Story" }
+  /stories/{id}:
+    get:
+      operationId: getStory
+      tags: [stories]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: A story
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Story" }
+
+  /assignments:
+    get:
+      operationId: listAssignments
+      tags: [assignments]
+      parameters:
+        - in: query
+          name: classLevel
+          schema: { type: string }
+      responses:
+        "200":
+          description: Assignments
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Assignment" }
+    post:
+      operationId: createAssignment
+      tags: [assignments]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateAssignmentBody" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Assignment" }
+  /assignments/{id}:
+    get:
+      operationId: getAssignment
+      tags: [assignments]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Assignment detail
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AssignmentDetail" }
+    delete:
+      operationId: deleteAssignment
+      tags: [assignments]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "204": { description: Deleted }
+
+  /submissions:
+    get:
+      operationId: listSubmissions
+      tags: [submissions]
+      parameters:
+        - in: query
+          name: assignmentId
+          schema: { type: string }
+        - in: query
+          name: studentId
+          schema: { type: string }
+      responses:
+        "200":
+          description: Submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Submission" }
+    post:
+      operationId: createSubmission
+      tags: [submissions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateSubmissionBody" }
+      responses:
+        "201":
+          description: Submitted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Submission" }
+  /submissions/{id}/grade:
+    post:
+      operationId: gradeSubmission
+      tags: [submissions]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GradeSubmissionBody" }
+      responses:
+        "200":
+          description: Graded
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Submission" }
+
+  /students:
+    get:
+      operationId: listStudents
+      tags: [students]
+      responses:
+        "200":
+          description: Students
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Student" }
+  /students/{id}/progress:
+    get:
+      operationId: getStudentProgress
+      tags: [students]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Auto-generated progress report
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProgressReport" }
+
+  /dashboard/teacher:
+    get:
+      operationId: getTeacherDashboard
+      tags: [dashboard]
+      responses:
+        "200":
+          description: Teacher dashboard summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TeacherDashboard" }
+  /dashboard/student:
+    get:
+      operationId: getStudentDashboard
+      tags: [dashboard]
+      responses:
+        "200":
+          description: Student dashboard summary
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StudentDashboard" }
+
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UploadUrlRequest" }
+      responses:
+        "200":
+          description: Presigned upload URL
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UploadUrlResponse" }
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string }
+
+    LoginBody:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string }
+        password: { type: string }
+
+    AuthUser:
+      type: object
+      required: [id, username, fullName, role]
+      properties:
+        id: { type: string }
+        username: { type: string }
+        fullName: { type: string }
+        role: { type: string, enum: [student, teacher, admin] }
+        classLevel: { type: string, nullable: true }
+        avatarColor: { type: string, nullable: true }
+
+    SubjectSummary:
+      type: object
+      required: [subject, lessonCount, color]
+      properties:
+        subject: { type: string }
+        lessonCount: { type: integer }
+        color: { type: string }
+
+    Lesson:
+      type: object
+      required: [id, title, subject, classLevel, youtubeId, durationMinutes, description, thumbnailUrl]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        subject: { type: string }
+        classLevel: { type: string }
+        youtubeId: { type: string }
+        durationMinutes: { type: integer }
+        description: { type: string }
+        thumbnailUrl: { type: string }
+        milestone: { type: string, nullable: true }
+        content: { type: string, nullable: true }
+
+    Story:
+      type: object
+      required: [id, title, emoji, classLevel, summary, body, readMinutes]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        emoji: { type: string }
+        classLevel: { type: string }
+        summary: { type: string }
+        body: { type: string }
+        moral: { type: string, nullable: true }
+        readMinutes: { type: integer }
+
+    Assignment:
+      type: object
+      required: [id, title, subject, classLevel, dueDate, createdAt, instructions, submissionCount]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        subject: { type: string }
+        classLevel: { type: string }
+        dueDate: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+        instructions: { type: string }
+        submissionCount: { type: integer }
+        lessonId: { type: string, nullable: true }
+
+    AssignmentDetail:
+      allOf:
+        - $ref: "#/components/schemas/Assignment"
+        - type: object
+          required: [submissions]
+          properties:
+            submissions:
+              type: array
+              items: { $ref: "#/components/schemas/Submission" }
+
+    CreateAssignmentBody:
+      type: object
+      required: [title, subject, classLevel, dueDate, instructions]
+      properties:
+        title: { type: string }
+        subject: { type: string }
+        classLevel: { type: string }
+        dueDate: { type: string, format: date-time }
+        instructions: { type: string }
+        lessonId: { type: string, nullable: true }
+
+    Attachment:
+      type: object
+      required: [url, name, mimeType, kind]
+      properties:
+        url: { type: string }
+        name: { type: string }
+        mimeType: { type: string }
+        kind: { type: string, enum: [image, audio, video, file] }
+        size: { type: integer, nullable: true }
+
+    Submission:
+      type: object
+      required: [id, assignmentId, assignmentTitle, studentId, studentName, submittedAt, content, status, attachments]
+      properties:
+        id: { type: string }
+        assignmentId: { type: string }
+        assignmentTitle: { type: string }
+        studentId: { type: string }
+        studentName: { type: string }
+        submittedAt: { type: string, format: date-time }
+        content: { type: string }
+        attachmentUrl: { type: string, nullable: true }
+        attachments:
+          type: array
+          items: { $ref: "#/components/schemas/Attachment" }
+        status: { type: string, enum: [pending, graded] }
+        grade: { type: string, nullable: true }
+        feedback: { type: string, nullable: true }
+        gradedAt: { type: string, format: date-time, nullable: true }
+
+    CreateSubmissionBody:
+      type: object
+      required: [assignmentId, content]
+      properties:
+        assignmentId: { type: string }
+        content: { type: string }
+        attachmentUrl: { type: string, nullable: true }
+        attachments:
+          type: array
+          items: { $ref: "#/components/schemas/Attachment" }
+
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name: { type: string, minLength: 1 }
+        size: { type: integer, minimum: 1 }
+        contentType: { type: string, minLength: 1 }
+
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL: { type: string, format: uri }
+        objectPath: { type: string }
+        metadata:
+          $ref: "#/components/schemas/UploadUrlRequest"
+
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+
+    GradeSubmissionBody:
+      type: object
+      required: [grade, feedback]
+      properties:
+        grade: { type: string, enum: [excellent, good, developing, needs_support] }
+        feedback: { type: string }
+
+    Student:
+      type: object
+      required: [id, fullName, classLevel, avatarColor, submissionCount, gradedCount]
+      properties:
+        id: { type: string }
+        fullName: { type: string }
+        classLevel: { type: string }
+        avatarColor: { type: string }
+        submissionCount: { type: integer }
+        gradedCount: { type: integer }
+
+    Milestone:
+      type: object
+      required: [name, area, level]
+      properties:
+        name: { type: string }
+        area: { type: string }
+        level: { type: string, enum: [emerging, developing, achieved, excelling] }
+
+    ProgressReport:
+      type: object
+      required: [student, totalAssignments, submittedCount, gradedCount, gradeBreakdown, milestones, generatedAt, summary]
+      properties:
+        student: { $ref: "#/components/schemas/Student" }
+        totalAssignments: { type: integer }
+        submittedCount: { type: integer }
+        gradedCount: { type: integer }
+        gradeBreakdown:
+          type: array
+          items:
+            type: object
+            required: [grade, count]
+            properties:
+              grade: { type: string }
+              count: { type: integer }
+        milestones:
+          type: array
+          items: { $ref: "#/components/schemas/Milestone" }
+        generatedAt: { type: string, format: date-time }
+        summary: { type: string }
+
+    TeacherDashboard:
+      type: object
+      required: [teacherName, totalStudents, activeAssignments, pendingSubmissions, gradedThisWeek, recentSubmissions, classBreakdown]
+      properties:
+        teacherName: { type: string }
+        totalStudents: { type: integer }
+        activeAssignments: { type: integer }
+        pendingSubmissions: { type: integer }
+        gradedThisWeek: { type: integer }
+        recentSubmissions:
+          type: array
+          items: { $ref: "#/components/schemas/Submission" }
+        classBreakdown:
+          type: array
+          items:
+            type: object
+            required: [classLevel, studentCount]
+            properties:
+              classLevel: { type: string }
+              studentCount: { type: integer }
+
+    StudentDashboard:
+      type: object
+      required: [studentName, classLevel, avatarColor, dueAssignments, recentLessons, recentGrades, streakDays]
+      properties:
+        studentName: { type: string }
+        classLevel: { type: string }
+        avatarColor: { type: string }
+        streakDays: { type: integer }
+        dueAssignments:
+          type: array
+          items: { $ref: "#/components/schemas/Assignment" }
+        recentLessons:
+          type: array
+          items: { $ref: "#/components/schemas/Lesson" }
+        recentGrades:
+          type: array
+          items: { $ref: "#/components/schemas/Submission" }
+
+    AdminUser:
+      type: object
+      required: [id, username, fullName, role, isActive, createdAt]
+      properties:
+        id: { type: string }
+        username: { type: string }
+        fullName: { type: string }
+        role: { type: string, enum: [student, teacher] }
+        classLevel: { type: string, nullable: true }
+        avatarColor: { type: string, nullable: true }
+        isActive: { type: boolean }
+        createdAt: { type: string, format: date-time }
+
+    AdminUserCreated:
+      allOf:
+        - $ref: "#/components/schemas/AdminUser"
+        - type: object
+          required: [password]
+          properties:
+            password: { type: string }
+
+    CreateUserBody:
+      type: object
+      required: [fullName, role]
+      properties:
+        fullName: { type: string }
+        role: { type: string, enum: [student, teacher] }
+        classLevel: { type: string, nullable: true }
+        avatarColor: { type: string, nullable: true }
+        username: { type: string, description: "Optional custom username; auto-generated from fullName if omitted" }
+        password: { type: string, description: "Optional custom password; auto-generated if omitted (min 6 chars)" }
+
+    UpdateUserBody:
+      type: object
+      properties:
+        fullName: { type: string }
+        classLevel: { type: string, nullable: true }
+        avatarColor: { type: string, nullable: true }
+        password: { type: string, description: "If provided, sets a new password (min 6 chars). Invalidates existing sessions." }
+        isActive: { type: boolean, description: "Set to false to disable the account (prevents login). Invalidates existing sessions." }
+
+    AdminStats:
+      type: object
+      required: [teacherCount, studentCount]
+      properties:
+        teacherCount: { type: integer }
+        studentCount: { type: integer }
+
+    ResetPasswordResult:
+      type: object
+      required: [password]
+      properties:
+        password: { type: string }

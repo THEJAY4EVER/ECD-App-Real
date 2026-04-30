@@ -1,0 +1,50 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "-OUZsiNlioAHCiwC6wI_A"
+uri = "file://artifacts/masuka-ecd/public/icon.png"
+type = "image"
+title = "app icon sun baobab"
+
+[[generated]]
+id = "wTEizyX7F8ZBmcufTE_iU"
+uri = "file://artifacts/masuka-ecd/src/assets/images/math.png"
+type = "image"
+title = "math subject illustration"
+
+[[generated]]
+id = "1KKeyFPgnJhd8e22qyiTg"
+uri = "file://artifacts/masuka-ecd/src/assets/images/reading.png"
+type = "image"
+title = "Children reading Shona"
+
+[[generated]]
+id = "jy0c7y_zoJ5DoBa9La-J2"
+uri = "file://artifacts/masuka-ecd/src/assets/images/science.png"
+type = "image"
+title = "science subject illustration"
+
+[[generated]]
+id = "dIoOAVPCyFZAlQjOyXQqg"
+uri = "file://artifacts/masuka-ecd/src/assets/images/arts.png"
+type = "image"
+title = "arts subject illustration"
+
+[[generated]]
+id = "87YAwQbAoWzLyrNlmL4jG"
+uri = "file://artifacts/masuka-ecd/src/assets/images/login-hero.png"
+type = "image"
+title = "login hero children school"
+
+[[generated]]
+id = "61El9ch7rZb-wL10Wm9iv"
+uri = "file://artifacts/masuka-ecd/src/assets/images/english.png"
+type = "image"
+title = "english subject illustration"
+
+[[generated]]
+id = "nUQwp2St9J-BP-hlCrzPV"
+uri = "file://artifacts/masuka-ecd/src/assets/images/shona.png"
+type = "image"
+title = "shona subject illustration"

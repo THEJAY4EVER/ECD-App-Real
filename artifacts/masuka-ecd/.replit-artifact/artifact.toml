@@ -1,0 +1,37 @@
+kind = "web"
+previewPath = "/"
+title = "Masuka Junior School ECD"
+version = "1.0.0"
+id = "artifacts/masuka-ecd"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20117
+
+[services.development]
+run = "pnpm --filter @workspace/masuka-ecd run dev"
+
+[services.production]
+
+[services.production.build]
+args = ["sh", "-c", "pnpm --filter @workspace/masuka-ecd run build && pnpm --filter @workspace/api-server run build"]
+
+[services.production.run]
+args = ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
+
+[services.production.run.env]
+PORT = "8080"
+NODE_ENV = "production"
+
+[services.production.health.startup]
+path = "/api/healthz"
+
+[services.env]
+PORT = "20117"
+BASE_PATH = "/"
