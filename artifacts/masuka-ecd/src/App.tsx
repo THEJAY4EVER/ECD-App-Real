@@ -112,7 +112,7 @@ function App() {
       <TooltipProvider>
         <ThemeProvider>
           <I18nProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <WouterRouter base={""}>
               <AuthProvider>
                 <MusicProvider>
                   <Routes />
