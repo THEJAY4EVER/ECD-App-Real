@@ -2,3 +2,7 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build]
+  publish = "artifacts/masuka-ecd/dist/public"
+  command = "pnpm --filter @workspace/masuka-ecd... run build"
