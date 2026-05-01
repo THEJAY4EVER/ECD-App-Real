@@ -1,18 +1,19 @@
-import { UTApi } from "uploadthing/server";
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-const utapi = new UTApi({
-    token: process.env.UPLOADTHING_SECRET,
-});
-
-export async function uploadFileToStorage(
-    buffer: Buffer,
-    name: string,
-    contentType: string,
-): Promise<string> {
-    const file = new File([buffer], name, { type: contentType });
-    const response = await utapi.uploadFiles(file);
-    if (response.error) {
-        throw new Error(`Upload failed: ${response.error.message}`);
-    }
-    return response.data.url;
+export async function getUploadUrl(name: string): Promise<{ uploadUrl: string; fileUrl: string }> {
+    const path = `${Date.now()}-${name}`;
+    const res = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/upload/sign/uploads/${path}`,
+        {
+            method: "POST",
+            headers: { Authorization: `Bearer ${SUPABASE_KEY}` },
+        }
+    );
+    if (!res.ok) throw new Error(`Failed to get upload URL: ${res.statusText}`);
+    const data = await res.json();
+    return {
+        uploadUrl: `${SUPABASE_URL}/storage/v1${data.url}`,
+        fileUrl: `${SUPABASE_URL}/storage/v1/object/public/uploads/${path}`,
+    };
 }
