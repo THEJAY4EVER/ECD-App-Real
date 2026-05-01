@@ -28,15 +28,16 @@ async function uploadFile(file: Blob, name: string): Promise<Attachment> {
     body: JSON.stringify(meta),
   });
   if (!r.ok) throw new Error(`Upload URL failed: ${r.status}`);
-  const { uploadURL, objectPath } = (await r.json()) as { uploadURL: string; objectPath: string };
+  const { uploadURL } = (await r.json()) as { uploadURL: string };
   const put = await fetch(uploadURL, {
     method: "PUT",
     headers: { "Content-Type": meta.contentType },
     body: file,
   });
   if (!put.ok) throw new Error(`Upload failed: ${put.status}`);
+  const { url } = await put.json();
   return {
-    url: `/api/storage${objectPath}`,
+    url,
     name,
     mimeType: meta.contentType,
     kind: kindFromMime(meta.contentType),
