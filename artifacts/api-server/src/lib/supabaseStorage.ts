@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
 import { randomUUID } from 'crypto';
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -8,46 +7,33 @@ if (!supabaseUrl || !supabaseKey) {
     throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set');
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 export class SupabaseStorageService {
     async getUploadUrl(): Promise<{ uploadUrl: string; fileUrl: string }> {
-        const fileName = `uploads/${randomUUID()}`;
+        const fileName = randomUUID();
+        const path = `uploads/${fileName}`;
 
-        const { data, error } = await supabase.storage
-            .from('uploads')
-            .createSignedUploadUrl(fileName);
+        const response = await fetch(
+            `${supabaseUrl}/storage/v1/object/upload/sign/uploads/${path}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${supabaseKey}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-        if (error) throw error;
+        if (!response.ok) {
+            throw new Error(`Failed to get upload URL: ${response.statusText}`);
+        }
 
-        const fileUrl = `${supabaseUrl}/storage/v1/object/public/uploads/${fileName}`;
+        const data = await response.json();
+        const fileUrl = `${supabaseUrl}/storage/v1/object/public/uploads/${path}`;
 
         return {
-            uploadUrl: data.signedUrl,
+            uploadUrl: data.url,
             fileUrl,
         };
-    }
-
-    async getFileUrl(filePath: string): Promise<string> {
-        if (filePath.startsWith('http')) return filePath;
-
-        const cleanPath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
-
-        const { data } = supabase.storage
-            .from('uploads')
-            .getPublicUrl(cleanPath);
-
-        return data.publicUrl;
-    }
-
-    async deleteFile(filePath: string): Promise<void> {
-        const cleanPath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
-
-        const { error } = await supabase.storage
-            .from('uploads')
-            .remove([cleanPath]);
-
-        if (error) throw error;
     }
 }
 
