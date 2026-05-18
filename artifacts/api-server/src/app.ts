@@ -44,6 +44,7 @@ if (process.env.NODE_ENV === "production") {
   logger.info({ frontendDist }, "Serving static files from");
   app.use(express.static(frontendDist));
   app.get("/{*path}", (_req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.join(frontendDist, "index.html"));
   });
 }
