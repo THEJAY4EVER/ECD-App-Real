@@ -40,7 +40,7 @@ app.use("/api", (_req, res) => {
 });
 
 if (process.env.NODE_ENV === "production") {
-  const frontendDist = path.resolve(process.cwd(), "artifacts/masuka-ecd/dist/public");
+  const frontendDist = path.resolve(__dirname, "../../masuka-ecd/dist/public");
   logger.info({ frontendDist }, "Serving static files from");
   app.use(express.static(frontendDist));
   app.get("/{*path}", (_req, res) => {
