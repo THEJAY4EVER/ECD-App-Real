@@ -96,11 +96,10 @@ export default function StudentMaterials() {
               <button
                 key={s}
                 onClick={() => setFilterSubject(s)}
-                className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                  filterSubject === s
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-background text-muted-foreground border-border hover:border-primary/50"
-                }`}
+                className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${filterSubject === s
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-background text-muted-foreground border-border hover:border-primary/50"
+                  }`}
               >
                 {s === SUBJECT_ALL ? "📖 " : (s ? subjectMeta(s).emoji + " " : "")}
                 {s}
@@ -168,7 +167,7 @@ export default function StudentMaterials() {
                   </div>
                   <div className="px-4 pb-3">
                     <a
-                      href={`/api/storage${m.fileUrl}`}
+                      href={m.fileUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="block"

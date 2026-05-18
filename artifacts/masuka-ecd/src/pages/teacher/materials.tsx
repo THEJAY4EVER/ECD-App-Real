@@ -253,7 +253,7 @@ export default function TeacherMaterials() {
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <a
-                      href={`/api/storage${m.fileUrl}`}
+                      href={m.fileUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex"
