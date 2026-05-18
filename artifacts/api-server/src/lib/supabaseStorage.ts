@@ -9,10 +9,12 @@ const BUCKET = "uploads";
 
 export async function getUploadUrl(
     name: string,
-    contentType?: string
+    contentType?: string,
+    folder?: string
 ): Promise<{ uploadUrl: string; fileUrl: string }> {
 
-    const path = `${Date.now()}-${name}`;
+    const filename = `${Date.now()}-${name}`;
+    const path = folder ? `${folder}/${filename}` : filename;
 
     const { data, error } = await supabase.storage
         .from(BUCKET)

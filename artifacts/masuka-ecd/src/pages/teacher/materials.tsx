@@ -322,6 +322,7 @@ export default function TeacherMaterials() {
                           name: file.name,
                           size: file.size,
                           contentType: file.type,
+                          folder: "learning-materials",
                         }),
                       });
                       const { uploadURL, objectPath } = await res.json();

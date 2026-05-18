@@ -1,11 +1,9 @@
 import { Router, type IRouter } from "express";
-import { db, materialsTable, usersTable } from "@workspace/db";
-import { eq, and, or, isNull } from "drizzle-orm";
+import { db, materialsTable } from "@workspace/db";
+import { eq, or, isNull } from "drizzle-orm";
 import { requireUser } from "../middlewares/auth";
-import { ObjectStorageService } from "../lib/objectStorage";
 
 const router: IRouter = Router();
-const storageService = new ObjectStorageService();
 
 const MATERIAL_FIELDS = {
   id: materialsTable.id,
@@ -94,7 +92,7 @@ router.delete("/materials/:id", requireUser, async (req, res) => {
     return;
   }
 
-  const { id } = req.params;
+  const id = req.params.id as string;
 
   const [existing] = await db
     .select({ id: materialsTable.id, uploadedById: materialsTable.uploadedById, fileUrl: materialsTable.fileUrl })

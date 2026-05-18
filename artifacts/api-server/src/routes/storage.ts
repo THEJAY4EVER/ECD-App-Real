@@ -5,13 +5,13 @@ import { requireUser } from "../middlewares/auth";
 const router: IRouter = Router();
 
 router.post("/storage/uploads/request-url", requireUser, async (req: Request, res: Response) => {
-  const { name, size, contentType } = req.body;
+  const { name, size, contentType, folder } = req.body;
   if (!name || !contentType) {
     res.status(400).json({ error: "Missing required fields" });
     return;
   }
   try {
-    const { uploadUrl, fileUrl } = await getUploadUrl(name, contentType);
+    const { uploadUrl, fileUrl } = await getUploadUrl(name, contentType, folder);
     res.json({
       uploadURL: uploadUrl,
       objectPath: fileUrl,
