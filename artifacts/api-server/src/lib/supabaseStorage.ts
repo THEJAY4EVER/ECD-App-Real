@@ -2,10 +2,16 @@ import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "uploads";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const BUCKET = "uploads";
+export { BUCKET };
+
+export async function listBuckets() {
+  const { data, error } = await supabase.storage.listBuckets();
+  return { data, error };
+}
 
 export async function getUploadUrl(
     name: string,
