@@ -1,5 +1,9 @@
+import { createClient } from "@supabase/supabase-js";
+
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const BUCKET = "uploads";
 
@@ -10,30 +14,18 @@ export async function getUploadUrl(
 
     const path = `${Date.now()}-${name}`;
 
-    const res = await fetch(
-        `${SUPABASE_URL}/storage/v1/object/upload/sign/${BUCKET}/${path}`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${SUPABASE_KEY}`,
-                apikey: SUPABASE_KEY,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                contentType,
-            }),
-        }
-    );
+    const { data, error } = await supabase.storage
+        .from(BUCKET)
+        .createSignedUploadUrl(path);
 
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Failed to get upload URL: ${res.status} ${text}`);
+    if (error || !data) {
+        throw new Error(
+            `Failed to create signed upload URL: ${error?.message || "Unknown error"}`
+        );
     }
 
-    const data = await res.json();
-
     return {
-        uploadUrl: `${SUPABASE_URL}/storage/v1${data.url}`,
+        uploadUrl: data.signedUrl,
         fileUrl: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`,
     };
 }
