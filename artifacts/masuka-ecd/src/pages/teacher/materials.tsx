@@ -325,9 +325,12 @@ export default function TeacherMaterials() {
                           folder: "learning-materials",
                         }),
                       });
-                      const { uploadURL, objectPath } = await res.json();
-                      pendingObjectPath.current = objectPath ?? "";
-                      return { method: "PUT" as const, url: uploadURL, headers: { "Content-Type": file.type } };
+                      const data = await res.json();
+                      if (!res.ok) {
+                        throw new Error(data.detail ?? data.error ?? "Failed to get upload URL");
+                      }
+                      pendingObjectPath.current = data.objectPath ?? "";
+                      return { method: "PUT" as const, url: data.uploadURL, headers: { "Content-Type": file.type } };
                     }}
                     onComplete={(result) => {
                       const file = result.successful?.[0];

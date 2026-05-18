@@ -53,6 +53,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Everything else (API calls, fonts, icons): network-first with cache fallback.
-  event.respondWith(fetch(request).catch(() => caches.match(request)));
+  // Everything else (API calls, fonts, icons): pass straight to network.
+  // No caching — API responses must never be served stale.
+  event.respondWith(fetch(request));
 });
