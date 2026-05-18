@@ -11,7 +11,7 @@ router.post("/storage/uploads/request-url", requireUser, async (req: Request, re
     return;
   }
   try {
-    const { uploadUrl, fileUrl } = await getUploadUrl(name);
+    const { uploadUrl, fileUrl } = await getUploadUrl(name, contentType);
     res.json({
       uploadURL: uploadUrl,
       objectPath: fileUrl,
