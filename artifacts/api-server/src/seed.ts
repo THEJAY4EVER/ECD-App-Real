@@ -8,16 +8,16 @@ import { eq } from "drizzle-orm";
 // All from channels that allow embedding & have no age restrictions.
 const LESSON_VIDEO_REFRESH: { titlePrefix: string; youtubeId: string }[] = [
   { titlePrefix: "Counting from 1 to 10", youtubeId: "lqX1NdKAhHo" },  // Jack Hartmann: I Can Count to 10
-  { titlePrefix: "Shapes All Around",     youtubeId: "IkZs2_1-YJU" },  // KidsTV123: The Shapes Song (HD)
-  { titlePrefix: "ABC Phonics",           youtubeId: "BELlZKpi1Zs" },  // KidsTV123: Phonics Song 2
-  { titlePrefix: "Storytime",             youtubeId: "b4vfsheySAA" },  // Animated: All Stories Belong to Ananse
-  { titlePrefix: "Mhuri Yangu",           youtubeId: "GdngW-tYmyg" },  // Ndinofarira Kugeza Mazino – Zimbabwe Shona Nursery Rhyme
-  { titlePrefix: "Mazuva eVhiki",         youtubeId: "7Za1Fv3P9uE" },  // Shona Alphabet Song – Zimbabwe Nursery Rhymes
-  { titlePrefix: "Animals of Zimbabwe",   youtubeId: "ltcMIobR8oI" },  // 100 African Animals for Kids
-  { titlePrefix: "How Plants Grow",       youtubeId: "tkFPyue5X3Q" },  // SciShow Kids: How Does A Seed Become A Plant
-  { titlePrefix: "Drumming",              youtubeId: "T5C0eWazjZc" },  // Fun Djembe Drum Lesson for Kids – Mister Boom Boom
-  { titlePrefix: "Drawing Animals",       youtubeId: "YQoxF9cWg2I" },  // Art for Kids Hub – Draw a Farm Collection
-  { titlePrefix: "Heritage",             youtubeId: "JAXlOOO1i20" },  // Great Zimbabwe Black History Month documentary
+  { titlePrefix: "Shapes All Around", youtubeId: "IkZs2_1-YJU" },  // KidsTV123: The Shapes Song (HD)
+  { titlePrefix: "ABC Phonics", youtubeId: "BELlZKpi1Zs" },  // KidsTV123: Phonics Song 2
+  { titlePrefix: "Storytime", youtubeId: "b4vfsheySAA" },  // Animated: All Stories Belong to Ananse
+  { titlePrefix: "Mhuri Yangu", youtubeId: "GdngW-tYmyg" },  // Ndinofarira Kugeza Mazino – Zimbabwe Shona Nursery Rhyme
+  { titlePrefix: "Mazuva eVhiki", youtubeId: "7Za1Fv3P9uE" },  // Shona Alphabet Song – Zimbabwe Nursery Rhymes
+  { titlePrefix: "Animals of Zimbabwe", youtubeId: "ltcMIobR8oI" },  // 100 African Animals for Kids
+  { titlePrefix: "How Plants Grow", youtubeId: "tkFPyue5X3Q" },  // SciShow Kids: How Does A Seed Become A Plant
+  { titlePrefix: "Drumming", youtubeId: "T5C0eWazjZc" },  // Fun Djembe Drum Lesson for Kids – Mister Boom Boom
+  { titlePrefix: "Drawing Animals", youtubeId: "YQoxF9cWg2I" },  // Art for Kids Hub – Draw a Farm Collection
+  { titlePrefix: "Heritage", youtubeId: "JAXlOOO1i20" },  // Great Zimbabwe Black History Month documentary
 ];
 
 async function refreshLessonVideos() {
@@ -196,10 +196,10 @@ Say the sound of each letter out loud. Then find something at home that starts w
       title: "Storytime: The Greedy Hyena",
       subject: "English",
       classLevel: "ECD B",
-      youtubeId: "BgFZQzqIdYo",
+      youtubeId: "3TPqIK2Iiwk",
       durationMinutes: 6,
       description: "An African folktale read aloud with colorful illustrations.",
-      thumbnailUrl: "https://img.youtube.com/vi/BgFZQzqIdYo/hqdefault.jpg",
+      thumbnailUrl: "https://www.youtube.com/watch?v=3TPqIK2Iiwk/hqdefault.jpg",
       milestone: "Speaks in full sentences (English)",
       content: `## About the Story 📖
 
