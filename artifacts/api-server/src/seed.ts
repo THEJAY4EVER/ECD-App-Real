@@ -7,17 +7,17 @@ import { eq } from "drizzle-orm";
 // Verified embeddable YouTube IDs — tested for mobile WebView compatibility.
 // All from channels that allow embedding & have no age restrictions.
 const LESSON_VIDEO_REFRESH: { titlePrefix: string; youtubeId: string }[] = [
-  { titlePrefix: "Counting from 1 to 10", youtubeId: "DR-cfDsHCGA" },   // Pinkfong: 1-20 Number Song
-  { titlePrefix: "Shapes All Around",     youtubeId: "OEbRDtCAFdU" },   // Bounce Patrol: Shapes
-  { titlePrefix: "ABC Phonics",           youtubeId: "BELlZKpi1Zs" },   // A for Apple Phonics Song
-  { titlePrefix: "Storytime",             youtubeId: "GwV7k6Y5HE0" },   // African Folk Tales for Kids
-  { titlePrefix: "Mhuri Yangu",           youtubeId: "rsGfNYzkbcI" },   // Shona family song
-  { titlePrefix: "Mazuva eVhiki",         youtubeId: "ZzfGAtKK4lA" },   // Shona days of week
-  { titlePrefix: "Animals of Zimbabwe",   youtubeId: "Tvb0SUS7jSQ" },   // African wildlife for kids
-  { titlePrefix: "How Plants Grow",       youtubeId: "tkFPyue5X3Q" },   // How plants grow for kids
-  { titlePrefix: "Drumming",              youtubeId: "vN7Ce3PydlY" },   // African drumming
-  { titlePrefix: "Drawing Animals",       youtubeId: "PsBp82BCvRk" },   // Draw animals step-by-step
-  { titlePrefix: "Heritage",              youtubeId: "VgDi-8L7iE0" },   // Great Zimbabwe
+  { titlePrefix: "Counting from 1 to 10", youtubeId: "lqX1NdKAhHo" },  // Jack Hartmann: I Can Count to 10
+  { titlePrefix: "Shapes All Around",     youtubeId: "IkZs2_1-YJU" },  // KidsTV123: The Shapes Song (HD)
+  { titlePrefix: "ABC Phonics",           youtubeId: "BELlZKpi1Zs" },  // KidsTV123: Phonics Song 2
+  { titlePrefix: "Storytime",             youtubeId: "b4vfsheySAA" },  // Animated: All Stories Belong to Ananse
+  { titlePrefix: "Mhuri Yangu",           youtubeId: "WC_p83hdNB0" },  // Shona Nursery Rhymes compilation
+  { titlePrefix: "Mazuva eVhiki",         youtubeId: "loINl3Ln6Ck" },  // Super Simple Songs: Days of the Week
+  { titlePrefix: "Animals of Zimbabwe",   youtubeId: "u0EN8itpQZo" },  // African Safari Animals for Kids
+  { titlePrefix: "How Plants Grow",       youtubeId: "tkFPyue5X3Q" },  // SciShow Kids: How Does A Seed Become A Plant
+  { titlePrefix: "Drumming",              youtubeId: "kjo9VPxtgo0" },  // African Drums For Kids music lesson
+  { titlePrefix: "Drawing Animals",       youtubeId: "zAdeebxiIMs" },  // Learn How To Draw Animals For Kids
+  { titlePrefix: "Heritage",              youtubeId: "quzjmZ-7s6w" },  // TED-Ed: Who built Great Zimbabwe?
 ];
 
 async function refreshLessonVideos() {

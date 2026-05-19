@@ -9,16 +9,22 @@ import { ObjectStorageService } from "../lib/objectStorage";
 const router: IRouter = Router();
 const objectStorageService = new ObjectStorageService();
 
-// Only accept attachment URLs that point at our private object storage route.
-// Format produced by AttachmentUploader: `/api/storage/objects/<entityId>`.
-const ATTACHMENT_URL_PREFIX = "/api/storage/objects/";
+// Accept attachments from our own storage backend (two possible formats):
+//   1. Legacy Replit object storage  → /api/storage/objects/<entityId>
+//   2. Supabase public storage       → https://<project>.supabase.co/storage/v1/object/public/…
+const LEGACY_PREFIX = "/api/storage/objects/";
+const SUPABASE_STORAGE_RE = /^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\//;
 
 function isAcceptedAttachmentUrl(url: string): boolean {
-  return url.startsWith(ATTACHMENT_URL_PREFIX);
+  return url.startsWith(LEGACY_PREFIX) || SUPABASE_STORAGE_RE.test(url);
 }
 
 function toEntityPath(url: string): string {
   return url.replace(/^\/api\/storage/, "");
+}
+
+function isLegacyObjectUrl(url: string): boolean {
+  return url.startsWith(LEGACY_PREFIX);
 }
 
 function normalizeAttachments(input: unknown): Attachment[] {
@@ -126,9 +132,10 @@ router.post("/submissions", requireRole("student"), async (req, res) => {
       return;
     }
   }
-  // Bind each uploaded object to this student via ACL so the storage route can
-  // enforce ownership on subsequent reads.
+  // Bind legacy Replit object-storage uploads to this student via ACL.
+  // Supabase public-bucket URLs are already access-controlled at the bucket level.
   for (const a of rawAttachments) {
+    if (!isLegacyObjectUrl(a.url)) continue;
     try {
       await objectStorageService.trySetObjectEntityAclPolicy(toEntityPath(a.url), {
         owner: req.user!.id,

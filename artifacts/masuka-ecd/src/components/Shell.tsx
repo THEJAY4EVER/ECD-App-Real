@@ -124,7 +124,19 @@ export function Shell({ children, title }: { children: ReactNode; title?: string
         </div>
       </header>
 
-      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-4">{children}</main>
+      <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-4">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={loc}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </main>
 
       <nav
         className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur border-t border-border"
