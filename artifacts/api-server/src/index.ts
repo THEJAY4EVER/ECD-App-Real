@@ -2,6 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { ensureAdmin } from "./ensure-admin";
 import { ensureStories } from "./ensure-stories";
+import { ensureLessons } from "./ensure-lessons";
 
 const rawPort = process.env["PORT"];
 
@@ -22,6 +23,9 @@ ensureAdmin().catch((err) =>
 );
 ensureStories().catch((err) =>
   logger.warn({ err }, "ensureStories failed"),
+);
+ensureLessons().catch((err) =>
+  logger.warn({ err }, "ensureLessons failed"),
 );
 
 app.listen(port, (err) => {

@@ -7,17 +7,97 @@ import { eq } from "drizzle-orm";
 // Verified embeddable YouTube IDs — tested for mobile WebView compatibility.
 // All from channels that allow embedding & have no age restrictions.
 const LESSON_VIDEO_REFRESH: { titlePrefix: string; youtubeId: string }[] = [
-  { titlePrefix: "Counting from 1 to 10", youtubeId: "lqX1NdKAhHo" },  // Jack Hartmann: I Can Count to 10
-  { titlePrefix: "Shapes All Around", youtubeId: "IkZs2_1-YJU" },  // KidsTV123: The Shapes Song (HD)
-  { titlePrefix: "ABC Phonics", youtubeId: "BELlZKpi1Zs" },  // KidsTV123: Phonics Song 2
-  { titlePrefix: "Storytime", youtubeId: "b4vfsheySAA" },  // Animated: All Stories Belong to Ananse
-  { titlePrefix: "Mhuri Yangu", youtubeId: "GdngW-tYmyg" },  // Ndinofarira Kugeza Mazino – Zimbabwe Shona Nursery Rhyme
-  { titlePrefix: "Mazuva eVhiki", youtubeId: "7Za1Fv3P9uE" },  // Shona Alphabet Song – Zimbabwe Nursery Rhymes
-  { titlePrefix: "Animals of Zimbabwe", youtubeId: "ltcMIobR8oI" },  // 100 African Animals for Kids
-  { titlePrefix: "How Plants Grow", youtubeId: "tkFPyue5X3Q" },  // SciShow Kids: How Does A Seed Become A Plant
-  { titlePrefix: "Drumming", youtubeId: "T5C0eWazjZc" },  // Fun Djembe Drum Lesson for Kids – Mister Boom Boom
-  { titlePrefix: "Drawing Animals", youtubeId: "YQoxF9cWg2I" },  // Art for Kids Hub – Draw a Farm Collection
-  { titlePrefix: "Heritage", youtubeId: "JAXlOOO1i20" },  // Great Zimbabwe Black History Month documentary
+  // ── Mathematics ──
+  { titlePrefix: "Counting from 1 to 10",       youtubeId: "lqX1NdKAhHo" },  // Jack Hartmann
+  { titlePrefix: "Shapes All Around",            youtubeId: "IkZs2_1-YJU" },  // KidsTV123
+  { titlePrefix: "Counting 11 to 20",            youtubeId: "_MVzXKfr6e8" },  // Jack Hartmann Count to 20
+  { titlePrefix: "Fun with Addition",            youtubeId: "uONIJ5TQ2DA" },  // Jack Hartmann Add
+  { titlePrefix: "Subtraction for Little",       youtubeId: "pwQKugrFmJQ" },  // Jack Hartmann Subtract
+  { titlePrefix: "Big and Small",                youtubeId: "jXm74Me7E6g" },  // Big Small Size
+  { titlePrefix: "Ordinal Numbers",              youtubeId: "jOUdGf8oVc8" },  // Ordinal Numbers Song
+  { titlePrefix: "Heavy or Light",               youtubeId: "qUOQrXmfwDM" },  // Jack Hartmann Measurement
+  { titlePrefix: "3D Shapes",                    youtubeId: "ZnZYK83utu0" },  // 3D Shapes Song
+  { titlePrefix: "Patterns All Around",          youtubeId: "ZSjHZSbWfzw" },  // Patterns Song
+  { titlePrefix: "Sorting and Classifying",      youtubeId: "Z-eM5m5UZlo" },  // Sorting Song
+  { titlePrefix: "Telling the Time",             youtubeId: "xdR7s8mwyp8" },  // Telling Time O'Clock
+  { titlePrefix: "Writing Numbers",              youtubeId: "pzmB0GoEKkA" },  // Jack Hartmann Numbers
+  { titlePrefix: "More, Less and Equal",         youtubeId: "uONIJ5TQ2DA" },  // Jack Hartmann (reused)
+  { titlePrefix: "Colours — The Rainbow",        youtubeId: "s0p9P9KOQSk" },  // KidsTV123 Colors
+  // ── English ──
+  { titlePrefix: "ABC Phonics",                  youtubeId: "BELlZKpi1Zs" },  // KidsTV123 Phonics
+  { titlePrefix: "Storytime",                    youtubeId: "b4vfsheySAA" },  // Anansi folktale
+  { titlePrefix: "My Body",                      youtubeId: "Rc_kIWKLiD8" },  // Body Parts Song
+  { titlePrefix: "Action Words",                 youtubeId: "KKVDvv4jBCw" },  // Action Verbs Song
+  { titlePrefix: "Opposites",                    youtubeId: "Qfl9m0sff-4" },  // Opposites Song
+  { titlePrefix: "Community Helpers",            youtubeId: "O7AzjLTj3-o" },  // Community Helpers
+  { titlePrefix: "Months of the Year",           youtubeId: "vW10YzD1CT8" },  // Months Song
+  { titlePrefix: "The Weather",                  youtubeId: "3yIuU6sh2wU" },  // Weather Song
+  { titlePrefix: "Manners and Kindness",         youtubeId: "1eCdTfkxbJc" },  // Please Thank You
+  { titlePrefix: "Feelings and Emotions",        youtubeId: "eMOnyPxE_w8" },  // Emotions Song
+  { titlePrefix: "Classic Nursery Rhymes",       youtubeId: "k76XelYleyU" },  // Nursery Rhymes
+  { titlePrefix: "Transport and Vehicles",       youtubeId: "fGEyttZb5Qk" },  // Transport Song
+  { titlePrefix: "Sight Words",                  youtubeId: "0jDSzVmmHOw" },  // Sight Words
+  { titlePrefix: "Insects — Amazing Bugs",       youtubeId: "biJTcuZ3OSc" },  // Insects Song
+  // ── Shona ──
+  { titlePrefix: "Mhuri Yangu",                  youtubeId: "GdngW-tYmyg" },  // Shona Nursery Rhyme ZW
+  { titlePrefix: "Mazuva eVhiki",                youtubeId: "7Za1Fv3P9uE" },  // Shona Alphabet Song
+  { titlePrefix: "Mangwanani!",                  youtubeId: "iYD6Gnpvf64" },  // Shona Greetings
+  { titlePrefix: "Nhamba muChiShona",            youtubeId: "i9jTvI_etEo" },  // Shona Numbers
+  { titlePrefix: "Mavara eChiShona",             youtubeId: "B9xVEaTCp2w" },  // Shona Colours
+  { titlePrefix: "Nhengo dzeMuviri",             youtubeId: "5zjswWlxyxM" },  // Shona Body Parts
+  { titlePrefix: "Mhuka muChiShona",             youtubeId: "z_QT_OuSIH4" },  // Shona Animals
+  { titlePrefix: "Chikafu muChiShona",           youtubeId: "jdqhcL4V8Ac" },  // Shona Food
+  { titlePrefix: "Nhetembo yeChiShona",          youtubeId: "GdngW-tYmyg" },  // Shona Poems
+  { titlePrefix: "Tsumo dzeChiShona",            youtubeId: "bNd3S0oy1Mo" },  // Shona Proverbs
+  { titlePrefix: "Mazita ekufamba",              youtubeId: "MHa1KpO1Ano" },  // Transport Shona
+  { titlePrefix: "Mamiriro ekunze",              youtubeId: "7Za1Fv3P9uE" },  // Weather Shona
+  { titlePrefix: "Shona kuChikoro",              youtubeId: "GdngW-tYmyg" },  // Shona at School
+  { titlePrefix: "Kubala muChiShona",            youtubeId: "B9xVEaTCp2w" },  // Reading Shona
+  // ── Environmental Science ──
+  { titlePrefix: "Animals of Zimbabwe",          youtubeId: "ltcMIobR8oI" },  // 100 African Animals
+  { titlePrefix: "How Plants Grow",              youtubeId: "tkFPyue5X3Q" },  // SciShow Kids
+  { titlePrefix: "The Water Cycle",              youtubeId: "KM-59ljA4Bs" },  // Water Cycle
+  { titlePrefix: "Seasons of the Year",          youtubeId: "FEPU7va9phs" },  // Seasons Song
+  { titlePrefix: "Ocean and Sea Animals",        youtubeId: "a3iJjUKWrkk" },  // Under the Sea
+  { titlePrefix: "Insects — Amazing",            youtubeId: "biJTcuZ3OSc" },  // Insects
+  { titlePrefix: "Birds of Zimbabwe",            youtubeId: "DFgn8BlGfWE" },  // Birds
+  { titlePrefix: "Recycling and Our",            youtubeId: "AOvcW8l3RzE" },  // Recycling Song
+  { titlePrefix: "Our Amazing Body",             youtubeId: "XfS8O4KlHVM" },  // Human Body
+  { titlePrefix: "Our Five Senses",              youtubeId: "zAwhBY9pJSk" },  // Five Senses
+  { titlePrefix: "The Sun, Moon and Stars",      youtubeId: "iF_ukhQrsiE" },  // Sun Moon Stars
+  { titlePrefix: "Food Chains",                  youtubeId: "5Gv9yuN2Ch8" },  // Food Chain
+  { titlePrefix: "Rocks, Soil and the Ground",   youtubeId: "IKXP3vGy0as" },  // Rocks
+  { titlePrefix: "Taking Care of Our Earth",     youtubeId: "v_gv3JSOM_c" },  // Earth Care
+  // ── Visual & Performing Arts ──
+  { titlePrefix: "Drumming",                     youtubeId: "T5C0eWazjZc" },  // Djembe Kids
+  { titlePrefix: "Drawing Animals",              youtubeId: "YQoxF9cWg2I" },  // Art for Kids Hub
+  { titlePrefix: "Drawing a House",              youtubeId: "YmtmuHZcyHY" },  // Draw a House
+  { titlePrefix: "Drawing Flowers",              youtubeId: "DJqlLeD0EGA" },  // Draw Flowers
+  { titlePrefix: "Drawing People",               youtubeId: "uXlO6ocidiY" },  // Draw People
+  { titlePrefix: "Mixing Colours",               youtubeId: "-U3VIgZ4byY" },  // Colour Mixing
+  { titlePrefix: "Finger Painting",              youtubeId: "tGn4H9YUxf0" },  // Finger Painting
+  { titlePrefix: "Paper Craft",                  youtubeId: "pFfBrCyHfWs" },  // Paper Craft
+  { titlePrefix: "Dance and Movement",           youtubeId: "rGvUxtc2QUs" },  // African Dance
+  { titlePrefix: "Rhythm and Beat",              youtubeId: "HU_M4z7qnTc" },  // Rhythm Kids
+  { titlePrefix: "Drawing Trees and Nature",     youtubeId: "zSnB1WMQt44" },  // Draw Trees
+  { titlePrefix: "Creating Art with Shapes",     youtubeId: "KWtkoIkM_9c" },  // Art Shapes
+  { titlePrefix: "Making Musical Instruments",   youtubeId: "68ngmcKybys" },  // DIY Instruments
+  { titlePrefix: "Drawing Vehicles",             youtubeId: "am1AhhVfqqc" },  // Draw Vehicles
+  // ── Heritage Studies ──
+  { titlePrefix: "Heritage: Great Zimbabwe",     youtubeId: "JAXlOOO1i20" },  // Great Zimbabwe doc
+  { titlePrefix: "Zimbabwe's Flag",              youtubeId: "wN2HRneQIac" },  // Zimbabwe Flag
+  { titlePrefix: "Traditional Zimbabwean Food",  youtubeId: "9a6C5rvS56A" },  // Traditional Food
+  { titlePrefix: "Traditional African Games",    youtubeId: "6F416m-Z4f8" },  // African Games
+  { titlePrefix: "Our Community and Family",     youtubeId: "gIk7ppDMKRg" },  // Community
+  { titlePrefix: "Victoria Falls",               youtubeId: "spNQAaTzMRU" },  // Victoria Falls
+  { titlePrefix: "African Oral Tradition",       youtubeId: "efbdtdlYiM0" },  // Storytelling
+  { titlePrefix: "Ancient African Kingdoms",     youtubeId: "WhytqHqc63I" },  // Ancient Kingdoms
+  { titlePrefix: "Traditional African Clothing", youtubeId: "SbmUMPt2h_o" },  // African Clothing
+  { titlePrefix: "Heroes of Zimbabwe",           youtubeId: "nvPhYnjh9JI" },  // Zimbabwe Heroes
+  { titlePrefix: "African Art — Patterns",       youtubeId: "bw_Q_zJdeuQ" },  // African Art
+  { titlePrefix: "Zimbabwe's Geography",         youtubeId: "JAXlOOO1i20" },  // Zimbabwe Geography
+  { titlePrefix: "African Proverbs and Wisdom",  youtubeId: "b4vfsheySAA" },  // African Proverbs
+  { titlePrefix: "African Cultures and",         youtubeId: "rGvUxtc2QUs" },  // African Cultures
 ];
 
 async function refreshLessonVideos() {
