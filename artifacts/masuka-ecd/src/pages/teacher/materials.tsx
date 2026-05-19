@@ -32,12 +32,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ObjectUploader } from "@workspace/object-storage-web";
 import {
   FileText, Image, Music, Video, Trash2, Upload, BookOpen,
-  Eye, Download, FileUp,
+  Eye, FileUp, Loader2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const SUBJECTS = [
   "Mathematics", "English", "Shona", "Environmental Science",
@@ -115,7 +113,9 @@ export default function TeacherMaterials() {
   const [filterSubject, setFilterSubject] = useState("All");
   const [filterClass, setFilterClass] = useState("All Classes");
 
-  const pendingObjectPath = useRef("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [pendingUpload, setPendingUpload] = useState<{
     fileUrl: string;
@@ -162,13 +162,67 @@ export default function TeacherMaterials() {
     },
   });
 
-  const filtered = materials.filter((m) => {
-    const subjectMatch = filterSubject === "All" || m.subject === filterSubject;
-    const classMatch = filterClass === "All Classes" || (m.classLevel ?? "All Classes") === filterClass;
-    return subjectMatch && classMatch;
-  });
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!fileInputRef.current) return;
+    fileInputRef.current.value = "";
+    if (!file) return;
 
-  async function handleSave() {
+    if (file.size > 52428800) {
+      setUploadError("File exceeds 50 MB limit.");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      // Step 1: get a signed upload URL from the API
+      const urlRes = await fetch("/api/storage/uploads/request-url", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: file.name,
+          size: file.size,
+          contentType: file.type || "application/octet-stream",
+          folder: "learning-materials",
+        }),
+      });
+      const urlData = await urlRes.json();
+      if (!urlRes.ok) {
+        throw new Error(urlData.detail ?? urlData.error ?? "Failed to get upload URL");
+      }
+
+      // Step 2: upload directly to Supabase storage
+      const putRes = await fetch(urlData.uploadURL, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+      });
+      if (!putRes.ok) {
+        throw new Error("Failed to upload file to storage");
+      }
+
+      setPendingUpload({
+        fileUrl: urlData.objectPath,
+        fileName: file.name,
+        mimeType: file.type || "application/octet-stream",
+        fileSize: file.size,
+      });
+      if (!form.title) {
+        setForm((f) => ({ ...f, title: file.name.replace(/\.[^.]+$/, "") }));
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Upload failed";
+      setUploadError(msg);
+      toast({ title: msg, variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  function handleSave() {
     if (!pendingUpload) {
       toast({ title: "Please upload a file first", variant: "destructive" });
       return;
@@ -177,7 +231,6 @@ export default function TeacherMaterials() {
       toast({ title: "Title is required", variant: "destructive" });
       return;
     }
-
     createM.mutate({
       ...pendingUpload,
       title: form.title.trim(),
@@ -186,6 +239,12 @@ export default function TeacherMaterials() {
       classLevel: form.classLevel === "All Classes" ? undefined : form.classLevel,
     });
   }
+
+  const filtered = materials.filter((m) => {
+    const subjectMatch = filterSubject === "All" || m.subject === filterSubject;
+    const classMatch = filterClass === "All Classes" || (m.classLevel ?? "All Classes") === filterClass;
+    return subjectMatch && classMatch;
+  });
 
   return (
     <Shell title="Materials">
@@ -252,12 +311,7 @@ export default function TeacherMaterials() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <a
-                      href={m.fileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex"
-                    >
+                    <a href={m.fileUrl} target="_blank" rel="noreferrer" className="inline-flex">
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="View / Download">
                         <Eye className="w-3.5 h-3.5" />
                       </Button>
@@ -280,13 +334,16 @@ export default function TeacherMaterials() {
       </div>
 
       {/* ── Upload Dialog ── */}
-      <Dialog open={showUpload} onOpenChange={(open) => { if (!open) { setShowUpload(false); setPendingUpload(null); } }}>
+      <Dialog open={showUpload} onOpenChange={(open) => {
+        if (!open) { setShowUpload(false); setPendingUpload(null); setUploadError(null); }
+      }}>
         <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Upload Material</DialogTitle>
             <DialogDescription>Upload a file and fill in the details below.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            {/* File picker zone */}
             <div className="rounded-xl border-2 border-dashed border-border p-4 flex flex-col items-center gap-3">
               {pendingUpload ? (
                 <div className="text-center space-y-1">
@@ -299,10 +356,15 @@ export default function TeacherMaterials() {
                     size="sm"
                     variant="ghost"
                     className="text-xs h-6 text-muted-foreground"
-                    onClick={() => setPendingUpload(null)}
+                    onClick={() => { setPendingUpload(null); setUploadError(null); }}
                   >
                     Change file
                   </Button>
+                </div>
+              ) : isUploading ? (
+                <div className="flex flex-col items-center gap-2 py-2">
+                  <Loader2 className="w-7 h-7 animate-spin text-primary" />
+                  <p className="text-xs text-muted-foreground">Uploading…</p>
                 </div>
               ) : (
                 <>
@@ -310,49 +372,26 @@ export default function TeacherMaterials() {
                   <p className="text-xs text-muted-foreground text-center">
                     Supports PDF, images, audio, video, Word, and text files (max 50 MB)
                   </p>
-                  <ObjectUploader
-                    maxFileSize={52428800}
-                    maxNumberOfFiles={1}
-                    onGetUploadParameters={async (file) => {
-                      const res = await fetch("/api/storage/uploads/request-url", {
-                        method: "POST",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          name: file.name,
-                          size: file.size,
-                          contentType: file.type,
-                          folder: "learning-materials",
-                        }),
-                      });
-                      const data = await res.json();
-                      if (!res.ok) {
-                        throw new Error(data.detail ?? data.error ?? "Failed to get upload URL");
-                      }
-                      pendingObjectPath.current = data.objectPath ?? "";
-                      return { method: "PUT" as const, url: data.uploadURL, headers: { "Content-Type": file.type } };
-                    }}
-                    onComplete={(result) => {
-                      const file = result.successful?.[0];
-                      if (file) {
-                        setPendingUpload({
-                          fileUrl: pendingObjectPath.current,
-                          fileName: file.name,
-                          mimeType: file.type ?? "application/octet-stream",
-                          fileSize: file.size ?? 0,
-                        });
-                        if (!form.title) {
-                          setForm((f) => ({ ...f, title: file.name.replace(/\.[^.]+$/, "") }));
-                        }
-                      }
-                    }}
-                    buttonClassName="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium px-4 py-2 hover:bg-primary/90 transition-colors"
+                  {uploadError && (
+                    <p className="text-xs text-destructive text-center">{uploadError}</p>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,image/*,audio/*,video/*"
+                    onChange={handleFileSelect}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
                   >
-                    <Upload className="w-4 h-4" /> Choose File
-                  </ObjectUploader>
+                    <Upload className="w-4 h-4 mr-2" /> Choose File
+                  </Button>
                 </>
               )}
             </div>
+
             <div className="space-y-2">
               <Label>Title <span className="text-destructive">*</span></Label>
               <Input
@@ -400,8 +439,10 @@ export default function TeacherMaterials() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => { setShowUpload(false); setPendingUpload(null); }}>Cancel</Button>
-            <Button onClick={handleSave} disabled={createM.isPending || !pendingUpload}>
+            <Button variant="outline" onClick={() => { setShowUpload(false); setPendingUpload(null); setUploadError(null); }}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={createM.isPending || !pendingUpload || isUploading}>
               {createM.isPending ? "Saving…" : "Save Material"}
             </Button>
           </DialogFooter>
@@ -414,7 +455,7 @@ export default function TeacherMaterials() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete "{deleteTarget?.title}"?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently remove the material and its file. Students will no longer be able to access it.
+              This will permanently remove the material record. Students will no longer be able to access it.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
