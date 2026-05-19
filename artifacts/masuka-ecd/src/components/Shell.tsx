@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Home, BookOpen, ClipboardList, Users, LogOut, Library, Gamepad2, Palette, ShieldCheck, FolderOpen } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -46,6 +46,13 @@ export function Shell({ children, title }: { children: ReactNode; title?: string
   const tabs = getTabs(user?.role);
   const isAdmin = user?.role === "admin";
   const isTeacher = user?.role === "teacher";
+  const onSettings = loc === "/settings";
+
+  // Remember the last non-settings route so we can go back when leaving settings.
+  const prevRouteRef = useRef("/");
+  useEffect(() => {
+    if (!onSettings) prevRouteRef.current = loc;
+  }, [loc, onSettings]);
 
   const [showSettings, setShowSettings] = useState(false);
   useEffect(() => {
@@ -63,8 +70,9 @@ export function Shell({ children, title }: { children: ReactNode; title?: string
         style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
       >
         <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link
-            href="/settings"
+          <button
+            type="button"
+            onClick={() => navigate(onSettings ? prevRouteRef.current : "/settings")}
             className="flex items-center gap-2 rounded-lg p-1 -ml-1 hover:bg-muted transition-colors shrink-0"
             data-testid="link-settings"
             aria-label={t("settings.title")}
@@ -100,7 +108,7 @@ export function Shell({ children, title }: { children: ReactNode; title?: string
               </div>
               <div className="text-xs text-muted-foreground leading-tight truncate max-w-[9rem]">{user?.fullName}</div>
             </div>
-          </Link>
+          </button>
           <div className="flex items-center gap-1">
             {!isTeacher && !isAdmin && <MusicToggle />}
             {!isAdmin && <LanguagePicker />}

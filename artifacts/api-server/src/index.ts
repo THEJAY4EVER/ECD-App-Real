@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { ensureAdmin } from "./ensure-admin";
+import { ensureStories } from "./ensure-stories";
 
 const rawPort = process.env["PORT"];
 
@@ -18,6 +19,9 @@ if (Number.isNaN(port) || port <= 0) {
 
 ensureAdmin().catch((err) =>
   logger.warn({ err }, "ensureAdmin failed — admin account may already exist"),
+);
+ensureStories().catch((err) =>
+  logger.warn({ err }, "ensureStories failed"),
 );
 
 app.listen(port, (err) => {
