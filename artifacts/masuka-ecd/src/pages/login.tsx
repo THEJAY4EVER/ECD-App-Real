@@ -255,7 +255,16 @@ export default function LoginPage() {
               />
             </div>
           </div>
-          <h1 className="text-3xl font-extrabold text-white drop-shadow-lg tracking-tight">
+          <h1
+            className="text-4xl tracking-wide"
+            style={{
+              fontFamily: "'Fredoka One', cursive",
+              background: "linear-gradient(180deg, #ffffff 30%, #ffe57f 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(2px 4px 0px rgba(0,0,0,0.22))",
+            }}
+          >
             {t("app.title")}
           </h1>
           <p className="text-sm text-white/90 italic drop-shadow mt-0.5">{t("app.tagline")}</p>
