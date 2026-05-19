@@ -27,8 +27,11 @@ export async function getUploadUrl(
         .createSignedUploadUrl(path);
 
     if (error || !data) {
+        const { data: buckets } = await supabase.storage.listBuckets();
+        const bucketNames = buckets?.map((b) => b.name).join(", ") ?? "unable to list";
         throw new Error(
-            `Failed to create signed upload URL: ${error?.message || "Unknown error"}`
+            `Failed to create signed upload URL for bucket "${BUCKET}": ${error?.message || "Unknown error"}. ` +
+            `Available buckets: [${bucketNames}]`
         );
     }
 
