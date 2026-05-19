@@ -11,13 +11,13 @@ const LESSON_VIDEO_REFRESH: { titlePrefix: string; youtubeId: string }[] = [
   { titlePrefix: "Shapes All Around",     youtubeId: "IkZs2_1-YJU" },  // KidsTV123: The Shapes Song (HD)
   { titlePrefix: "ABC Phonics",           youtubeId: "BELlZKpi1Zs" },  // KidsTV123: Phonics Song 2
   { titlePrefix: "Storytime",             youtubeId: "b4vfsheySAA" },  // Animated: All Stories Belong to Ananse
-  { titlePrefix: "Mhuri Yangu",           youtubeId: "WC_p83hdNB0" },  // Shona Nursery Rhymes compilation
-  { titlePrefix: "Mazuva eVhiki",         youtubeId: "loINl3Ln6Ck" },  // Super Simple Songs: Days of the Week
-  { titlePrefix: "Animals of Zimbabwe",   youtubeId: "u0EN8itpQZo" },  // African Safari Animals for Kids
+  { titlePrefix: "Mhuri Yangu",           youtubeId: "GdngW-tYmyg" },  // Ndinofarira Kugeza Mazino – Zimbabwe Shona Nursery Rhyme
+  { titlePrefix: "Mazuva eVhiki",         youtubeId: "7Za1Fv3P9uE" },  // Shona Alphabet Song – Zimbabwe Nursery Rhymes
+  { titlePrefix: "Animals of Zimbabwe",   youtubeId: "ltcMIobR8oI" },  // 100 African Animals for Kids
   { titlePrefix: "How Plants Grow",       youtubeId: "tkFPyue5X3Q" },  // SciShow Kids: How Does A Seed Become A Plant
-  { titlePrefix: "Drumming",              youtubeId: "kjo9VPxtgo0" },  // African Drums For Kids music lesson
-  { titlePrefix: "Drawing Animals",       youtubeId: "zAdeebxiIMs" },  // Learn How To Draw Animals For Kids
-  { titlePrefix: "Heritage",              youtubeId: "quzjmZ-7s6w" },  // TED-Ed: Who built Great Zimbabwe?
+  { titlePrefix: "Drumming",              youtubeId: "T5C0eWazjZc" },  // Fun Djembe Drum Lesson for Kids – Mister Boom Boom
+  { titlePrefix: "Drawing Animals",       youtubeId: "YQoxF9cWg2I" },  // Art for Kids Hub – Draw a Farm Collection
+  { titlePrefix: "Heritage",             youtubeId: "JAXlOOO1i20" },  // Great Zimbabwe Black History Month documentary
 ];
 
 async function refreshLessonVideos() {

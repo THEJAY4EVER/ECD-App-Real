@@ -87,11 +87,24 @@ export default function StudentAssignmentDetail() {
                   <p className="text-sm whitespace-pre-wrap">{mySubmission.content}</p>
                   <AttachmentList attachments={(mySubmission as any).attachments ?? []} />
                   {mySubmission.status === "graded" && (
-                    <div className="mt-2 pt-2 border-t border-emerald-200 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Badge className={gradeColor(mySubmission.grade)}>{gradeLabel(mySubmission.grade)}</Badge>
+                    <div className="mt-3 pt-3 border-t border-emerald-200 space-y-2">
+                      <div className="flex items-center gap-3">
+                        {!isNaN(Number(mySubmission.grade)) && mySubmission.grade ? (
+                          <div className={`text-3xl font-extrabold w-16 h-16 rounded-2xl flex flex-col items-center justify-center shrink-0 ${gradeColor(mySubmission.grade)}`}>
+                            <span className="text-2xl leading-none">{mySubmission.grade}</span>
+                            <span className="text-[10px] font-medium opacity-80">/ 100</span>
+                          </div>
+                        ) : (
+                          <Badge className={gradeColor(mySubmission.grade)}>{gradeLabel(mySubmission.grade)}</Badge>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-emerald-700">Teacher Feedback</p>
+                          {mySubmission.feedback
+                            ? <p className="text-sm italic text-foreground/80">"{mySubmission.feedback}"</p>
+                            : <p className="text-xs text-muted-foreground">No comment left.</p>
+                          }
+                        </div>
                       </div>
-                      {mySubmission.feedback && <p className="text-sm italic">"{mySubmission.feedback}"</p>}
                     </div>
                   )}
                 </CardContent>

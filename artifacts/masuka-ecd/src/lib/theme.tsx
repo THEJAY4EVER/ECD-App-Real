@@ -26,7 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof localStorage === "undefined") return "system";
     const saved = localStorage.getItem("masuka-theme") as Theme | null;
-    return saved && ["light", "dark", "system"].includes(saved) ? saved : "system";
+    return saved && ["light", "dark", "system"].includes(saved) ? saved : "light";
   });
   const [resolved, setResolved] = useState<"light" | "dark">(() =>
     theme === "system" ? readSystem() : theme,

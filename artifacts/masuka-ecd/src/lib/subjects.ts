@@ -19,7 +19,20 @@ export function subjectMeta(name: string) {
 
 import { useI18n } from "@/lib/i18n";
 
+function isNumericGrade(grade?: string | null): boolean {
+  if (!grade) return false;
+  const n = Number(grade);
+  return !isNaN(n) && grade.trim() !== "";
+}
+
 export function gradeColor(grade?: string | null) {
+  if (isNumericGrade(grade)) {
+    const n = Number(grade);
+    if (n >= 80) return "bg-emerald-500 text-white";
+    if (n >= 65) return "bg-sky-500 text-white";
+    if (n >= 50) return "bg-amber-500 text-white";
+    return "bg-rose-500 text-white";
+  }
   switch (grade) {
     case "excellent": return "bg-emerald-500 text-white";
     case "good": return "bg-sky-500 text-white";
@@ -30,6 +43,7 @@ export function gradeColor(grade?: string | null) {
 }
 
 export function gradeLabel(grade?: string | null) {
+  if (isNumericGrade(grade)) return `${grade}/100`;
   switch (grade) {
     case "excellent": return "Excellent";
     case "good": return "Good";
@@ -41,5 +55,8 @@ export function gradeLabel(grade?: string | null) {
 
 export function useGradeLabel() {
   const { t } = useI18n();
-  return (grade?: string | null) => (grade ? t(`grade.${grade}`) : t("common.pending"));
+  return (grade?: string | null) => {
+    if (isNumericGrade(grade)) return `${grade}/100`;
+    return grade ? t(`grade.${grade}`) : t("common.pending");
+  };
 }

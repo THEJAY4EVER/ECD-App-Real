@@ -231,7 +231,7 @@ export const GradeSubmissionParams = zod.object({
 });
 
 export const GradeSubmissionBody = zod.object({
-  grade: zod.enum(["excellent", "good", "developing", "needs_support"]),
+  grade: zod.string(),
   feedback: zod.string(),
 });
 

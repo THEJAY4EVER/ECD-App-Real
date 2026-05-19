@@ -20,11 +20,17 @@ import {
   Dialog, DialogContent, DialogTitle, DialogHeader, DialogFooter, DialogTrigger, DialogDescription,
 } from "@/components/ui/dialog";
 import { ChevronLeft, Trash2 } from "lucide-react";
-import { gradeColor, useGradeLabel, subjectMeta } from "@/lib/subjects";
+import { gradeColor, useGradeLabel, subjectMeta, gradeLabel } from "@/lib/subjects";
+import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { AttachmentList } from "@/components/AttachmentUploader";
 
-const GRADES = ["excellent", "good", "developing", "needs_support"] as const;
+function scoreToLabel(score: number): string {
+  if (score >= 80) return "Excellent 🌟";
+  if (score >= 65) return "Good 👍";
+  if (score >= 50) return "Developing 📈";
+  return "Needs Support 💪";
+}
 
 export default function TeacherAssignmentDetail() {
   const gradeLabel = useGradeLabel();
@@ -136,12 +142,13 @@ function SubmissionCard({ submission, assignmentId }: { submission: Submission; 
   const grade = useGradeSubmission();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [g, setG] = useState<typeof GRADES[number]>(submission.grade as any ?? "good");
+  const existingScore = submission.grade && !isNaN(Number(submission.grade)) ? Number(submission.grade) : 75;
+  const [score, setScore] = useState(existingScore);
   const [fb, setFb] = useState(submission.feedback ?? "");
 
   async function onSave() {
     try {
-      await grade.mutateAsync({ id: submission.id, data: { grade: g, feedback: fb } });
+      await grade.mutateAsync({ id: submission.id, data: { grade: String(score), feedback: fb } });
       await qc.invalidateQueries({ queryKey: getGetAssignmentQueryKey(assignmentId) });
       await qc.invalidateQueries({ queryKey: getGetTeacherDashboardQueryKey() });
       toast({ title: "Graded ⭐" });
@@ -170,22 +177,30 @@ function SubmissionCard({ submission, assignmentId }: { submission: Submission; 
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Grade — {submission.studentName}</DialogTitle></DialogHeader>
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div>
-                <div className="text-xs font-semibold mb-2">Level</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {GRADES.map((opt) => (
-                    <Button
-                      key={opt}
-                      variant={g === opt ? "default" : "outline"}
-                      onClick={() => setG(opt)}
-                      className="justify-start"
-                      data-testid={`grade-${opt}`}
-                    >
-                      <span className={`w-2.5 h-2.5 rounded-full mr-2 ${gradeColor(opt).split(" ")[0]}`} />
-                      {gradeLabel(opt)}
-                    </Button>
-                  ))}
+                <div className="text-xs font-semibold mb-3">Score</div>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className={`text-3xl font-extrabold tabular-nums w-16 text-center rounded-xl py-1 ${gradeColor(String(score))}`}>
+                    {score}
+                  </span>
+                  <span className="text-sm text-muted-foreground flex-1">
+                    / 100 &nbsp;·&nbsp; {scoreToLabel(score)}
+                  </span>
+                </div>
+                <Slider
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={[score]}
+                  onValueChange={([v]) => setScore(v)}
+                  className="mt-2"
+                  data-testid="slider-grade"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <span>0</span>
+                  <span>50</span>
+                  <span>100</span>
                 </div>
               </div>
               <div>
